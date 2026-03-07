@@ -1,5 +1,7 @@
 from fastapi import FastAPI
-from app.schemas import CommandRequest
+from app.categorizer import categorize_files
+from app.folder_reader import read_files
+from app.schemas import CommandRequest, FolderRequest
 from app.command_parser import parse_user_input
 from app.executor import run_command
 from app.security import validate_command
@@ -25,3 +27,16 @@ def ai_terminal(req: CommandRequest):
         "command": command,
         "output": output
     }
+
+
+@app.post("/suggest-folders")
+def suggest_folders(req: FolderRequest):
+
+    files = read_files(req.path)
+
+    categories = categorize_files(files)
+    return categories
+    # return {
+    #     # "files": files,
+    #     "categories": categories
+    # }
